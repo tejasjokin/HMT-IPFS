@@ -1,17 +1,23 @@
 const fs = require('fs');
+const path = require('path');
 
 const createFile = (filePath, jsonData) => {
     try {
+        // Ensure the directory exists
+        const dirPath = path.dirname(filePath);
+        console.log(dirPath)
+        fs.mkdirSync(dirPath, { recursive: true });
+
         deleteFile(filePath)
     
         // Write JSON data to a new file
-        fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
-        console.log('JSON data saved to file:', filePath);
+        fs.writeFileSync(filePath, jsonData);
+        console.log('Data saved to file:', filePath);
     
         return true;
     }
     catch (error) {
-        console.error('Error saving JSON data:', error.message);
+        console.error('Error saving Data:', error.message);
         return false;
     }
 }
@@ -21,7 +27,6 @@ const deleteFile = (filePath) => {
         // Delete the file if it already exists
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
-            console.log('Existing file deleted');
         }
         return true;
     }

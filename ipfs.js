@@ -4,8 +4,8 @@ const fs = require('fs');
 require('dotenv').config();
 
 // Load Pinata API keys from environment variables
-const PINATA_API_KEY = process.env.PINATA_API_Key;
-const PINATA_SECRET_API_KEY = process.env.PINATA_API_Secret;
+const PINATA_API_KEY = process.env.PINATA_API_KEY;
+const PINATA_SECRET_API_KEY = process.env.PINATA_SECRET_API_KEY;
 const PINATA_GATEWAY_URL = process.env.PINATA_GATEWAY_URL;
 
 const pinFilesToIPFS = async (fileURLToPath) => {
@@ -15,13 +15,12 @@ const pinFilesToIPFS = async (fileURLToPath) => {
         const data = new FormData();
         data.append('file', readableStreamForFile);
 
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        var filename = `data_${timestamp}.txt`
+
         const options = JSON.stringify({
             pinataMetadata: {
-                name: "ExampleFile" + new Date().toUTCString(),
-                keyvalues: {
-                    customKey: 'customValue',
-                    customKey2: 'customValue2'
-                }
+                name: filename
             },
             pinataOptions: {
                 cidVersion: 0
@@ -51,7 +50,6 @@ const retrieveFileContent = async (hash) => {
     try {
         const gatewayUrl = getFileGateway(hash);
         const res = await axios.get(gatewayUrl);
-        console.log(res.data)
         return res.data;
     } catch (error) {
         console.error('Error uploading file to IPFS:', error.message);

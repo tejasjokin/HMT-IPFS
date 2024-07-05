@@ -10,15 +10,16 @@ const port = 3000;
 app.use(express.json());
 
 app.post('/upload', async (req, res) => {
-    const { jsonData } = req.body;
+    const { data } = req.body;
     // Define the file path
-    const filePath = path.join(__dirname, '/upload/data.json');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filePath = path.join(__dirname, `/upload/data_${timestamp}.txt`);
 
-    if (!jsonData) {
+    if (!data) {
         return res.status(400).json({ message: 'jsonData is required in the request body' });
     }
 
-    var fileCreated = createFile(filePath, jsonData);
+    var fileCreated = createFile(filePath, data);
     
 
     if(fileCreated)
@@ -49,9 +50,9 @@ app.post('/retrieve', async (req, res) => {
     }
 
     var filedata = await retrieveFileContent(hash)
-    if(filedata?.email !== undefined)
+    if(filedata !== undefined)
     {
-        return res.status(200).json(filedata);
+        return res.status(200).json({data: filedata });
     }
     else
     {
